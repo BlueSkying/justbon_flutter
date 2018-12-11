@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:justbon_flutter/views/utils/HttpUtil.dart';
+import 'package:justbon_flutter/views/utils/Api.dart';
 
 var kwidth = window.physicalSize.width;
 var kheight = window.physicalSize.height;
@@ -9,6 +11,14 @@ class mineViewController extends StatefulWidget{
     MineState createState()=> new MineState();
 }
 class MineState extends State<mineViewController>{
+    //数据源
+     Map sourceData;
+     @override
+     void initState(){
+        super.initState();
+        // 网络请求
+        _pullUserInfo();
+     }
      @override
      Widget build(BuildContext context){
        return new Scaffold(
@@ -53,8 +63,12 @@ class MineState extends State<mineViewController>{
              new Image.asset('images/my_bg.png',width: kwidth,height: 150,),
              new Column(
                children: <Widget>[
-                 new CircleAvatar(
-                   backgroundImage: new AssetImage('images/my_head.png'),
+                 new FadeInImage.assetNetwork(
+                   placeholder: 'images/my_head.png',
+                   fit: BoxFit.fitWidth,
+                   image: '',
+                   width: 60,
+                   height: 60,
                  ),
                  new Text('生活家',style: new TextStyle(fontSize: 14,color: Color(0xff333333),),),
                  new Center(
@@ -78,5 +92,17 @@ class MineState extends State<mineViewController>{
              )
            ],
         );
+     }
+    //获取用户信息
+     void _pullUserInfo() async{
+        String url = Api().USERINFO_URL;
+        var params = {'sCommandName':'getMember','sInput':{'ID':'1285858633'}};
+        var response = await HttpUtil().post(url,data:params);
+        if(response.statusCode == 200){
+          setState(() {
+                sourceData = response['Item']; 
+                print(sourceData);    
+                    });
+        }
      }
 }
