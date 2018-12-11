@@ -64,7 +64,7 @@ class HttpUtil {
         data: data,
         cancelToken: cancelToken,
       );
-      print('post请求成功!response.data：${response.data}');
+      // print('post请求成功!response.data：${response.data}');
     } on DioError catch (e) {
       if (CancelToken.isCancel(e)) {
         print('post请求取消! ' + e.message);

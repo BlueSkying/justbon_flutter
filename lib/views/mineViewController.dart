@@ -12,7 +12,8 @@ class mineViewController extends StatefulWidget{
 }
 class MineState extends State<mineViewController>{
     //数据源
-     Map sourceData;
+     String headImgUrl = '';
+     String nikeName = '';
      @override
      void initState(){
         super.initState();
@@ -66,11 +67,12 @@ class MineState extends State<mineViewController>{
                  new FadeInImage.assetNetwork(
                    placeholder: 'images/my_head.png',
                    fit: BoxFit.fitWidth,
-                   image: '',
+                   image: headImgUrl.length > 0 ? headImgUrl:'',
                    width: 60,
                    height: 60,
+              
                  ),
-                 new Text('生活家',style: new TextStyle(fontSize: 14,color: Color(0xff333333),),),
+                 new Text(nikeName.length > 0 ? nikeName:'生活家',style: new TextStyle(fontSize: 14,color: Color(0xff333333),),),
                  new Center(
                    child: new Stack(
                      alignment: const FractionalOffset(0.5, 0.1),
@@ -97,12 +99,11 @@ class MineState extends State<mineViewController>{
      void _pullUserInfo() async{
         String url = Api().USERINFO_URL;
         var params = {'sCommandName':'getMember','sInput':{'ID':'1285858633'}};
-        var response = await HttpUtil().post(url,data:params);
-        if(response.statusCode == 200){
+        var response = await HttpUtil().post(url,data:params); 
+          print('头像地址${response['Item']['sHeadImg']}');
           setState(() {
-                sourceData = response['Item']; 
-                print(sourceData);    
+                headImgUrl = response['Item']['sHeadImg']; 
+                nikeName =  response['Item']['sNickName'];  
                     });
-        }
      }
 }
