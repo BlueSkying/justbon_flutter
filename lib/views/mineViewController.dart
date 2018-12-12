@@ -14,11 +14,13 @@ class MineState extends State<mineViewController>{
     //数据源
      String headImgUrl = '';
      String nikeName = '';
+     String jiadouCount = '';
      @override
      void initState(){
         super.initState();
         // 网络请求
         _pullUserInfo();
+        _pullUserJiadou();
      }
      @override
      Widget build(BuildContext context){
@@ -53,6 +55,9 @@ class MineState extends State<mineViewController>{
                 leading: new Image.asset(iconName,width: 25,height: 25,),
                 title: new Text(title),
                 trailing: new Image.asset('images/ic_next.png',width: 8,height: 14,),
+                onTap:(){
+                  _itemClick(title);
+                }
             ),
         );
      }
@@ -64,28 +69,34 @@ class MineState extends State<mineViewController>{
              new Image.asset('images/my_bg.png',width: kwidth,height: 150,),
              new Column(
                children: <Widget>[
-                 new FadeInImage.assetNetwork(
-                   placeholder: 'images/my_head.png',
-                   fit: BoxFit.fitWidth,
-                   image: headImgUrl.length > 0 ? headImgUrl:'',
-                   width: 60,
-                   height: 60,
-              
+                 new CircleAvatar(
+                     radius: 30,
+                     backgroundImage: headImgUrl.length > 0 ? NetworkImage(headImgUrl) : AssetImage('images/my_head.png'),
                  ),
                  new Text(nikeName.length > 0 ? nikeName:'生活家',style: new TextStyle(fontSize: 14,color: Color(0xff333333),),),
                  new Center(
                    child: new Stack(
-                     alignment: const FractionalOffset(0.5, 0.1),
+                     alignment: const FractionalOffset(0.5, 0.05),
                      children: <Widget>[
-                        new Image.asset('images/filter40.png',width: 50,height: 20,),
                         new Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                              new Image.asset('images/jiadou_icon.png',width: 12,height: 13,),
-                             new Text('1000个',style: new TextStyle(fontSize: 12,color: Color(0xff333333),),),
+                             new Text(jiadouCount.length > 0 ? '${jiadouCount}个':'0个',style: new TextStyle(fontSize: 12,color: Color(0xff333333),),),
                              new Image.asset('images/ic_next.png',width: 8,height: 14,),
                           ],
-                        )
+                        ),
+                        new Stack(
+                              children: <Widget>[
+                                 new Image.asset('images/filter40.png',width: 80,height: 20,),
+                                 new Positioned(
+                                   left: 0,top: 0,right: 0,bottom: 0,
+                                   child: new FlatButton(onPressed: (){
+                                     _itemClick('嘉豆点击');
+                                 },color: Colors.transparent,),
+                                 )
+                              ],
+                          ),
                      ],
                    ),
                  ),
@@ -100,10 +111,22 @@ class MineState extends State<mineViewController>{
         String url = Api().USERINFO_URL;
         var params = {'sCommandName':'getMember','sInput':{'ID':'1285858633'}};
         var response = await HttpUtil().post(url,data:params); 
-          print('头像地址${response['Item']['sHeadImg']}');
-          setState(() {
+        setState(() {
                 headImgUrl = response['Item']['sHeadImg']; 
                 nikeName =  response['Item']['sNickName'];  
                     });
      }
+    // 获取用户嘉豆信息
+    void _pullUserJiadou() async{
+      String url = Api().USERJIADOU_URL;
+      var params = {'requestData':{'userId':'1285858633'}};
+      var response = await HttpUtil().post(url,data:params);
+      setState(() {
+              jiadouCount = response['resultData']['total'].toString();
+            });
+    }
+    // 选中我的列表
+    void _itemClick(String itemTitle){
+      print(itemTitle);
+    }
 }
