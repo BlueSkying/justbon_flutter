@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class mainController extends StatefulWidget{
     @override
-    MainState createState()=> new MainState();
+    _MainState createState()=> new _MainState();
 }
 
-class MainState extends State<mainController>{
+class _MainState extends State<mainController>{
      @override
      Widget build(BuildContext context){
        return new Scaffold(

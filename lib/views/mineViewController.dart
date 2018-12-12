@@ -8,9 +8,9 @@ var kheight = window.physicalSize.height;
 class mineViewController extends StatefulWidget{
     @override
     
-    MineState createState()=> new MineState();
+    _MineState createState()=> new _MineState();
 }
-class MineState extends State<mineViewController>{
+class _MineState extends State<mineViewController>{
     //数据源
      String headImgUrl = '';
      String nikeName = '';

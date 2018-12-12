@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class neighborViewController extends StatefulWidget{
     @override
-    NeighborState createState()=> new NeighborState();
+    _NeighborState createState()=> new _NeighborState();
 }
 
-class NeighborState extends State<neighborViewController>{
+class _NeighborState extends State<neighborViewController>{
      @override
      Widget build(BuildContext context){
        return new Scaffold(
