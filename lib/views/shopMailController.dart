@@ -9,7 +9,7 @@ class shopMailController extends StatefulWidget{
 class _ShomMailState extends State<shopMailController>{
 
      FlutterWebviewPlugin  flutterWebviewPlugin = FlutterWebviewPlugin();
-     var urlString = 'http://mall.justbon.com.cn/m/project.html?uid=1285858633&userToken=we23ddeweeeeeeeeeee';
+     var urlString = 'http://mall.justbon.com.cn/m/project.html?uid=1285858633&userToken=CA1FC79A7910241C1479B3ABADD1EB2B';
      
      launchUrl(){
        setState(() {
@@ -20,7 +20,6 @@ class _ShomMailState extends State<shopMailController>{
      @override
      void initState(){
        super.initState();
-
        flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged state){
         switch (state.type) {
         case WebViewState.shouldStart:
@@ -31,12 +30,10 @@ class _ShomMailState extends State<shopMailController>{
           break;
         case WebViewState.startLoad:
           // 开始加载
+         
           break;
         case WebViewState.finishLoad:
-          // 加载完成
-          setState(() {
-            
-          });
+          
           break;
          }
        });
@@ -57,7 +54,6 @@ class _ShomMailState extends State<shopMailController>{
             url: urlString,
             withZoom: true,
             withLocalStorage: true,
-            hidden: true,
             initialChild: Container(
               color: Colors.redAccent,
               child: const Center(
