@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:justbon_flutter/views/utils/HttpUtil.dart';
 import 'package:justbon_flutter/views/utils/Api.dart';
+import 'package:justbon_flutter/views/DetailVcn.dart';
 
 var kwidth = window.physicalSize.width;
 var kheight = window.physicalSize.height;
@@ -128,5 +129,10 @@ class _MineState extends State<mineViewController>{
     // 选中我的列表
     void _itemClick(String itemTitle){
       print(itemTitle);
+      Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+        return new DetailVcn(title: itemTitle,);
+      })).then((value){
+        print('回传的值$value');
+      });
     }
 }

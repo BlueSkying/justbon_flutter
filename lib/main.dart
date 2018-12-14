@@ -3,9 +3,11 @@ import './views/mainController.dart';
 import './views/neighborViewController.dart';
 import './views/shopMailController.dart';
 import './views/mineViewController.dart';
+import 'package:justbon_flutter/views/DetailVcn.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
+      routes: <String,WidgetBuilder>{   //这里定义的是静态路由不能传递参数
+        '/DetailVcn':(BuildContext context) => new DetailVcn()
+      },
     );
   }
 }
