@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:justbon_flutter/views/utils/HttpUtil.dart';
 import 'package:justbon_flutter/views/utils/Api.dart';
 import 'package:justbon_flutter/views/DetailVcn.dart';
@@ -13,12 +14,14 @@ class mineViewController extends StatefulWidget{
 }
 class _MineState extends State<mineViewController>{
     //数据源
+     String userName = '';
      String headImgUrl = '';
      String nikeName = '';
      String jiadouCount = '';
      @override
      void initState(){
         super.initState();
+        // _selectLocalUser();
         // 网络请求
         _pullUserInfo();
         _pullUserJiadou();
@@ -128,11 +131,25 @@ class _MineState extends State<mineViewController>{
     }
     // 选中我的列表
     void _itemClick(String itemTitle){
-      print(itemTitle);
-      Navigator.of(context).push(new MaterialPageRoute(builder: (_){
-        return new DetailVcn(title: itemTitle,);
-      })).then((value){
-        print('回传的值$value');
-      });
+        if (userName.length > 0 ){
+           Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+           return new DetailVcn(title: itemTitle,);
+           })).then((value){
+            print('回传的值$value');
+           });
+        }else{
+           Navigator.pushNamed(context, '/LoginVcn');
+        }
+    }
+      
+    // 本地查询是否存在登录用户
+    _selectLocalUser() async{
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String username = prefs.get('USERNAME');
+        if (username.length > 0){
+          setState(() {
+                 userName = username;     
+                    });
+        }
     }
 }

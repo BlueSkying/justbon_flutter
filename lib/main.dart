@@ -4,6 +4,7 @@ import './views/neighborViewController.dart';
 import './views/shopMailController.dart';
 import './views/mineViewController.dart';
 import 'package:justbon_flutter/views/DetailVcn.dart';
+import 'package:justbon_flutter/views/LoginVcn.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -27,7 +28,8 @@ class MyApp extends StatelessWidget {
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
       routes: <String,WidgetBuilder>{   //这里定义的是静态路由不能传递参数
-        '/DetailVcn':(BuildContext context) => new DetailVcn()
+        '/DetailVcn':(BuildContext context) => new DetailVcn(),
+        '/LoginVcn' :(BuildContext context) => new LoginVcn(),
       },
     );
   }
