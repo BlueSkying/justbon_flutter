@@ -69,6 +69,7 @@ class _LoginVcnState extends State<LoginVcn>{
                       hintText: '请输入手机号',
                       icon: Icon(Icons.phone)
                     ),
+                    
                   )
                 ],
              ),
