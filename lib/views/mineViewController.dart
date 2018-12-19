@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:justbon_flutter/views/utils/HttpUtil.dart';
 import 'package:justbon_flutter/views/utils/Api.dart';
 import 'package:justbon_flutter/views/DetailVcn.dart';
 
-var kwidth = window.physicalSize.width;
-var kheight = window.physicalSize.height;
 class mineViewController extends StatefulWidget{
     @override
     
@@ -18,10 +15,11 @@ class _MineState extends State<mineViewController>{
      String headImgUrl = '';
      String nikeName = '';
      String jiadouCount = '';
+     String projectName = '';
      @override
      void initState(){
         super.initState();
-        // _selectLocalUser();
+        _selectLocalUser();
         // 网络请求
         _pullUserInfo();
         _pullUserJiadou();
@@ -31,6 +29,14 @@ class _MineState extends State<mineViewController>{
        return new Scaffold(
             appBar: new AppBar(
               title: new Text('我的'),
+              actions: <Widget>[
+                IconButton(
+                  icon: new Image.asset('images/icon_set.png',width: 25,height: 25,),
+                  onPressed: (){
+
+                  },
+                ),
+              ],
             ),
             body: new Center(
               child: new ListView(
@@ -70,7 +76,7 @@ class _MineState extends State<mineViewController>{
           return new Stack(
            alignment: const FractionalOffset(0.5, 0.2),
            children: <Widget>[
-             new Image.asset('images/my_bg.png',width: kwidth,height: 150,),
+             new Image.asset('images/my_bg.png',width: Api().kwidth,height: 150,),
              new Column(
                children: <Widget>[
                  new CircleAvatar(
@@ -104,7 +110,7 @@ class _MineState extends State<mineViewController>{
                      ],
                    ),
                  ),
-                 new Text('生活家,～您的生活管家',style: new TextStyle(fontSize: 14,color: Color(0xff333333),),),
+                 new Text(projectName.length > 0 ? projectName : '生活家,～您的生活管家',style: new TextStyle(fontSize: 14,color: Color(0xff333333),),),
                ],
              )
            ],
@@ -131,25 +137,31 @@ class _MineState extends State<mineViewController>{
     }
     // 选中我的列表
     void _itemClick(String itemTitle){
-        if (userName.length > 0 ){
+        if (projectName.length > 0 ){
            Navigator.of(context).push(new MaterialPageRoute(builder: (_){
            return new DetailVcn(title: itemTitle,);
            })).then((value){
             print('回传的值$value');
            });
         }else{
-           Navigator.pushNamed(context, '/LoginVcn');
+           Navigator.pushNamed(context, '/LoginVcn').then((value){
+             if (value == '成功'){
+                _selectLocalUser();
+             }
+           });
         }
     }
       
     // 本地查询是否存在登录用户
     _selectLocalUser() async{
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        String username = prefs.get('USERNAME');
-        if (username.length > 0){
-          setState(() {
-                 userName = username;     
-                    });
+        String projectname = prefs.get('USERPROJECTNAME');
+        if (projectname !=null && projectname.length > 0){
+           setState(() {
+                 projectName = projectname;     
+                      });
+        }else{
+           print('没有登录用户');
         }
     }
 }
