@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:justbon_flutter/views/utils/HttpUtil.dart';
 import 'package:justbon_flutter/views/utils/Api.dart';
 import 'package:justbon_flutter/views/DetailVcn.dart';
-
+import 'package:justbon_flutter/views/SettingVcn.dart';
 class mineViewController extends StatefulWidget{
     @override
     
@@ -33,7 +33,11 @@ class _MineState extends State<mineViewController>{
                 IconButton(
                   icon: new Image.asset('images/icon_set.png',width: 25,height: 25,),
                   onPressed: (){
-
+                       Navigator.push(context, new MaterialPageRoute(builder: (_){
+                        return new SettingVcn();
+                       })).then((value){
+                            print('回传的值$value');
+                  });
                   },
                 ),
               ],

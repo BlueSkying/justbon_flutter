@@ -98,9 +98,10 @@ class _LoginVcnState extends State<LoginVcn>{
                     child: new TextField(
                          controller: _passController,
                          decoration: InputDecoration(
-                         contentPadding: EdgeInsets.all(10),
-                         hintText: '请输入密码',
-                    ),
+                           contentPadding: EdgeInsets.all(10),
+                           hintText: '请输入密码',
+                         ),
+                         obscureText:true,
                   )
                   )
                 ],
