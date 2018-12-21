@@ -11,6 +11,7 @@ class mineViewController extends StatefulWidget{
 }
 class _MineState extends State<mineViewController>{
     //数据源
+     String userId = '';
      String userName = '';
      String headImgUrl = '';
      String nikeName = '';
@@ -20,9 +21,6 @@ class _MineState extends State<mineViewController>{
      void initState(){
         super.initState();
         _selectLocalUser();
-        // 网络请求
-        _pullUserInfo();
-        _pullUserJiadou();
      }
      @override
      Widget build(BuildContext context){
@@ -123,7 +121,7 @@ class _MineState extends State<mineViewController>{
     //获取用户信息
      void _pullUserInfo() async{
         String url = Api().USERINFO_URL;
-        var params = {'sCommandName':'getMember','sInput':{'ID':'1285858633'}};
+        var params = {'sCommandName':'getMember','sInput':{'ID':userId}};
         var response = await HttpUtil().post(url,data:params); 
         setState(() {
                 headImgUrl = response['Item']['sHeadImg']; 
@@ -133,7 +131,7 @@ class _MineState extends State<mineViewController>{
     // 获取用户嘉豆信息
     void _pullUserJiadou() async{
       String url = Api().USERJIADOU_URL;
-      var params = {'requestData':{'userId':'1285858633'}};
+      var params = {'requestData':{'userId':userId}};
       var response = await HttpUtil().post(url,data:params);
       setState(() {
               jiadouCount = response['resultData']['total'].toString();
@@ -160,6 +158,13 @@ class _MineState extends State<mineViewController>{
     _selectLocalUser() async{
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String projectname = prefs.get('USERPROJECTNAME');
+        String userid = prefs.get('USERID');
+        if (userid != null && userid.length > 0){
+             // 网络请求
+          userId = userid;
+          _pullUserInfo();
+          _pullUserJiadou();
+        }
         if (projectname !=null && projectname.length > 0){
            setState(() {
                  projectName = projectname;     

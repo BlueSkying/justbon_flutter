@@ -44,6 +44,7 @@ class _SettingVcnState extends State<SettingVcn>{
   _logout() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
+    print('宽度==''${Api().kwidth}');
     Navigator.pushNamed(context, '/LoginVcn').then((value){
              if (value == '成功'){
                 Navigator.of(context).pop('成功');
