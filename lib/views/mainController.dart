@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:justbon_flutter/views/utils/HttpUtil.dart';
+import 'package:justbon_flutter/views/utils/Api.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 class mainController extends StatefulWidget{
     @override
     _MainState createState()=> new _MainState();
 }
 
 class _MainState extends State<mainController>{
+      String projectId = '';
+      List projectPicAds = [];
+     @override
+      void initState() {
+           // TODO: implement initState
+           super.initState();
+           _getProjectPic();
+         }
      @override
      Widget build(BuildContext context){
        return new Scaffold(
@@ -40,12 +51,50 @@ class _MainState extends State<mainController>{
               ],
             ),
             body: new Center(
-              child: new Text('这是主界面'),
+              child: new ListView(
+                scrollDirection: Axis.vertical,
+                children: <Widget>[
+                   _bannerScrollImg(),
+                ],
+              ),
             ),
        );
+     }
+    // banner循环播放图片 
+     _bannerScrollImg(){
+          return new Container(
+            width: MediaQuery.of(context).size.width,
+            height: 200,
+            child: Swiper(
+              itemBuilder: _SwiperBuilder,
+              itemCount: projectPicAds.length,
+              control: new SwiperControl(),
+              scrollDirection: Axis.horizontal,
+              autoplay: true,
+              onTap: (index){
+                  print('点击了$index个');
+              }
+            ),
+          );
+     }
+
+    Widget _SwiperBuilder(BuildContext context,int index){
+          return new Image.network(projectPicAds.length > 0 ? projectPicAds[index]['imgUrl'] : 'images/homebannerd.png',fit: BoxFit.fill,);
+          
      }
 
      _scan(){
        print('点击了扫码按钮');
+     }
+
+     _getProjectPic() async{
+         String url = Api().USERPROJECTADS_URL;
+         var params = {'type':'index','projectId':projectId};
+         var response = await HttpUtil().post(url,data:params);
+         if (response['r'] == '0'){
+             setState(() {
+                            projectPicAds = response['ads'];
+                          });
+         }
      }
 }
