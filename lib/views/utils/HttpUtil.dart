@@ -33,6 +33,7 @@ class HttpUtil {
       receiveTimeout: 30000,
       headers: {
         'clientId':'10101',
+        'version':'200',
       },
     );
     dio = new Dio(options);

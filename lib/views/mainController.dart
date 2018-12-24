@@ -11,11 +11,16 @@ class mainController extends StatefulWidget{
 class _MainState extends State<mainController>{
       String projectId = '';
       List projectPicAds = [];
+      String city = '';
+      String tempture = '';
+      String limit = '';
+    
      @override
       void initState() {
            // TODO: implement initState
            super.initState();
            _getProjectPic();
+           _getWeatherinfo();
          }
      @override
      Widget build(BuildContext context){
@@ -55,6 +60,7 @@ class _MainState extends State<mainController>{
                 scrollDirection: Axis.vertical,
                 children: <Widget>[
                    _bannerScrollImg(),
+                   _weatherItem(),
                 ],
               ),
             ),
@@ -83,6 +89,40 @@ class _MainState extends State<mainController>{
           
      }
 
+    _weatherItem(){
+      return new Column(
+         mainAxisAlignment: MainAxisAlignment.center,
+         children: <Widget>[
+           new Divider(
+               height: 15.0,
+               color:Color(0xff2bb2c1),
+             ),
+            new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Expanded(
+                      flex: 1,
+                      child: new Text('$city',style: new TextStyle(fontSize: 14.0),textAlign: TextAlign.center,),
+                  ),
+                  new Expanded(
+                      flex: 1,
+                      child: new Text('$tempture',style: new TextStyle(fontSize: 14.0),textAlign: TextAlign.center,),
+                  ),
+                  new Expanded(
+                      flex: 1,
+                      child: new Text('$limit',style: new TextStyle(fontSize: 14.0),textAlign: TextAlign.center,),
+                  ),
+                ],
+            ),
+            new Divider(
+               height: 15.0,
+               color:Color(0xff2bb2c1),
+             ),
+         ],
+      );
+    }
+
+
      _scan(){
        print('点击了扫码按钮');
      }
@@ -96,5 +136,18 @@ class _MainState extends State<mainController>{
                             projectPicAds = response['ads'];
                           });
          }
+     }
+
+     _getWeatherinfo() async{
+        String url = Api().WEATHER_URL;
+        var params = {'location':'104.07,30.67'};
+        var response = await HttpUtil().post(url,data:params);
+        if (response['r'].toString() == '0'){
+           setState(() {
+                  city = response['city'];
+                  tempture = response['weather'] + ' ' +response['cTemperature']+ '°C';  
+                  limit = '今日限行  ' + response['xx']['xxnum'];     
+                      });
+        }
      }
 }

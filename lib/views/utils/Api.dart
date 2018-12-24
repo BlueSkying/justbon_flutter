@@ -6,4 +6,5 @@ class Api{
     var USERJIADOU_URL = 'http://openapi.justbon.cn/api/scarlettBean/queryScarlettBeam';
     var USERLOGIN_URL = 'https://jcp.justbon.com/api/customer/userLogin';
     var USERPROJECTADS_URL = 'https://jcp.justbon.com/api/ads';
+    var WEATHER_URL = 'http://api.justbon.com/weather/queryWeatherInfo.json';
 }
