@@ -14,13 +14,14 @@ class _MainState extends State<mainController>{
       String city = '';
       String tempture = '';
       String limit = '';
-    
+      List middleBtn = [];
      @override
       void initState() {
            // TODO: implement initState
            super.initState();
            _getProjectPic();
            _getWeatherinfo();
+           _getMiddleBtn();
          }
      @override
      Widget build(BuildContext context){
@@ -61,6 +62,7 @@ class _MainState extends State<mainController>{
                 children: <Widget>[
                    _bannerScrollImg(),
                    _weatherItem(),
+                   _middleBtnItem(),
                 ],
               ),
             ),
@@ -122,6 +124,31 @@ class _MainState extends State<mainController>{
       );
     }
 
+    _middleBtnItem(){
+       return new GridView.custom(
+          shrinkWrap: true,
+          gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: 7.0,
+            crossAxisSpacing: 4.0,
+          ),
+          childrenDelegate: new SliverChildBuilderDelegate(
+            (context,index){
+               return new Column(
+                    children: <Widget>[
+                       new Center(
+                           child: new Image.network(middleBtn.length > 0 ? middleBtn[index]['realName'] : 'images/homebannerd.png',width: 65,height: 65,),
+                    ),
+                       new Center(
+                       child: new Text(middleBtn.length > 0 ? middleBtn[index]['funcName'] : '一键开门', style: new TextStyle(color: Color(0xff333333),fontSize: 14)),
+                    )
+                    ],
+                );
+            },
+            childCount: 8,
+          ),
+       );
+    }
 
      _scan(){
        print('点击了扫码按钮');
@@ -149,5 +176,16 @@ class _MainState extends State<mainController>{
                   limit = '今日限行  ' + response['xx']['xxnum'];     
                       });
         }
+     }
+
+     _getMiddleBtn() async{
+       String url = Api().MIDDLEBTN_URL;
+       var response = await HttpUtil().get(url);
+       
+       if (response['r'].toString() == '0'){
+           setState(() {
+                    middleBtn = response['top'];
+                  });
+       }  
      }
 }

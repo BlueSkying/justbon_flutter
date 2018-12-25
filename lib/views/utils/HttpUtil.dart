@@ -4,7 +4,7 @@
  * 网络请求封装
  */
 import 'package:dio/dio.dart';
-
+import 'dart:convert';
 class HttpUtil {
   static HttpUtil instance;
   Dio dio;
@@ -48,14 +48,14 @@ class HttpUtil {
         data: data,
         cancelToken: cancelToken,
       );
-      print('get请求成功!response.data：${response.data}');
+      // print('get请求成功!response.data：${response.data}');
     } on DioError catch (e) {
       if (CancelToken.isCancel(e)) {
         print('get请求取消! ' + e.message);
       }
       print('get请求发生错误：$e');
     }
-    return response.data;
+    return jsonDecode(response.data);
   }
 
   post(url, {data, options, cancelToken}) async {
