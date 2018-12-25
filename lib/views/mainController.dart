@@ -15,11 +15,13 @@ class _MainState extends State<mainController>{
       String tempture = '';
       String limit = '';
       List middleBtn = [];
+      List hotAds = [];
+      List shopMailAds = [];
      @override
       void initState() {
            // TODO: implement initState
            super.initState();
-           _getProjectPic();
+           _selectLocalUser();
            _getWeatherinfo();
            _getMiddleBtn();
          }
@@ -63,6 +65,7 @@ class _MainState extends State<mainController>{
                    _bannerScrollImg(),
                    _weatherItem(),
                    _middleBtnItem(),
+                  //  _shopMailItem(),
                 ],
               ),
             ),
@@ -150,6 +153,24 @@ class _MainState extends State<mainController>{
        );
     }
 
+    _shopMailItem(){
+       return ListView.builder(
+           itemCount: shopMailAds.length > 0 ? shopMailAds.length : 0,
+           itemBuilder: (BuildContext context,int position){
+              return new Center(
+                  child: new Column(
+                    children: <Widget>[
+                        new Text(shopMailAds.length > 0 ? shopMailAds[position]['mainTitle'] : '商城',style: new TextStyle(color: Color(0xff333333),fontSize: 16),),
+                        new Text(shopMailAds.length > 0 ? shopMailAds[position]['subTitle'] : '商城',style: new TextStyle(color: Color(0xff666666),fontSize: 14),),
+                        new Image.network(shopMailAds.length > 0 ? shopMailAds[position]['imgUrl'] : 'images/homebannerd.png',width: MediaQuery.of(context).size.width,height: 200,),
+
+                    ],
+                  ),
+              );
+           }
+       );
+    } 
+
      _scan(){
        print('点击了扫码按钮');
      }
@@ -181,11 +202,34 @@ class _MainState extends State<mainController>{
      _getMiddleBtn() async{
        String url = Api().MIDDLEBTN_URL;
        var response = await HttpUtil().get(url);
-       
        if (response['r'].toString() == '0'){
            setState(() {
                     middleBtn = response['top'];
                   });
        }  
      }
+
+     _getShopMailAds() async{
+       String url = Api().SHOPMAILADS_URL;
+       var params = {'projectId':projectId};
+       var response = HttpUtil().post(url,data:params);
+       print(response);
+       if (response['r'].toString() == '0'){
+          setState(() {
+                      hotAds = response['shop'];
+                      shopMailAds = response['ad'];
+                    });
+       }
+     }
+
+     // 本地查询是否存在登录用户
+    _selectLocalUser() async{
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String projectid = prefs.get('USERPROJECTID');
+        if (projectid !=null && projectid.length > 0){
+           projectId = projectid;  
+        }
+        _getProjectPic();
+        // _getShopMailAds();
+    }
 }
