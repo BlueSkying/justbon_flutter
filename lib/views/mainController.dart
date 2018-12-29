@@ -65,7 +65,8 @@ class _MainState extends State<mainController>{
                    _bannerScrollImg(),
                    _weatherItem(),
                    _middleBtnItem(),
-                  //  _shopMailItem(),
+                   _hotAdsItem(),
+                   _shopMailItem(),
                 ],
               ),
             ),
@@ -107,15 +108,15 @@ class _MainState extends State<mainController>{
                 children: <Widget>[
                   new Expanded(
                       flex: 1,
-                      child: new Text('$city',style: new TextStyle(fontSize: 14.0),textAlign: TextAlign.center,),
+                      child: new Text(city.length > 0 ? '$city' : '成都',style: new TextStyle(fontSize: 14.0),textAlign: TextAlign.center,),
                   ),
                   new Expanded(
                       flex: 1,
-                      child: new Text('$tempture',style: new TextStyle(fontSize: 14.0),textAlign: TextAlign.center,),
+                      child: new Text(tempture.length > 0 ? '$tempture' : '10',style: new TextStyle(fontSize: 14.0),textAlign: TextAlign.center,),
                   ),
                   new Expanded(
                       flex: 1,
-                      child: new Text('$limit',style: new TextStyle(fontSize: 14.0),textAlign: TextAlign.center,),
+                      child: new Text(limit.length > 0 ? '$limit' : '今日限行',style: new TextStyle(fontSize: 14.0),textAlign: TextAlign.center,),
                   ),
                 ],
             ),
@@ -130,6 +131,7 @@ class _MainState extends State<mainController>{
     _middleBtnItem(){
        return new GridView.custom(
           shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
           gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4,
             mainAxisSpacing: 7.0,
@@ -152,14 +154,43 @@ class _MainState extends State<mainController>{
           ),
        );
     }
+    
+    _hotAdsItem(){
+       return new Container(
+         padding: EdgeInsets.all(0),
+         margin: EdgeInsets.all(0),
+         height: 148,
+         child: new Row(
+          children: <Widget>[
+            new Image.network(hotAds.length > 0 ? hotAds[0]['imgUrl'] : 'images/homebannerd.png',width: (MediaQuery.of(context).size.width)/2,),
+            new Expanded(
+              child:  new Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                     new Image.network(hotAds.length > 0 ? hotAds[1]['imgUrl'] : 'images/homebannerd.png',width: (MediaQuery.of(context).size.width)/2,),
+                     new Image.network(hotAds.length > 0 ? hotAds[2]['imgUrl'] : 'images/homebannerd.png',width: (MediaQuery.of(context).size.width)/2,),
+                ],
+              ),
+            )
+          ],
+        )
+      );
+    }
 
     _shopMailItem(){
        return ListView.builder(
+           shrinkWrap: true,
+           physics: NeverScrollableScrollPhysics(),
+           scrollDirection: Axis.vertical,
            itemCount: shopMailAds.length > 0 ? shopMailAds.length : 0,
            itemBuilder: (BuildContext context,int position){
               return new Center(
                   child: new Column(
                     children: <Widget>[
+                        new Divider(
+                             height: 15.0,
+                             color:Color(0xffffffff),
+                        ),
                         new Text(shopMailAds.length > 0 ? shopMailAds[position]['mainTitle'] : '商城',style: new TextStyle(color: Color(0xff333333),fontSize: 16),),
                         new Text(shopMailAds.length > 0 ? shopMailAds[position]['subTitle'] : '商城',style: new TextStyle(color: Color(0xff666666),fontSize: 14),),
                         new Image.network(shopMailAds.length > 0 ? shopMailAds[position]['imgUrl'] : 'images/homebannerd.png',width: MediaQuery.of(context).size.width,height: 200,),
@@ -212,7 +243,7 @@ class _MainState extends State<mainController>{
      _getShopMailAds() async{
        String url = Api().SHOPMAILADS_URL;
        var params = {'projectId':projectId};
-       var response = HttpUtil().post(url,data:params);
+       var response =await HttpUtil().post(url,data:params);
        print(response);
        if (response['r'].toString() == '0'){
           setState(() {
@@ -230,6 +261,6 @@ class _MainState extends State<mainController>{
            projectId = projectid;  
         }
         _getProjectPic();
-        // _getShopMailAds();
+        _getShopMailAds();
     }
 }
