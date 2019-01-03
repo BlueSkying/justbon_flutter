@@ -10,6 +10,7 @@ class mainController extends StatefulWidget{
 
 class _MainState extends State<mainController>{
       String projectId = '';
+      String userId = '';
       List projectPicAds = [];
       String city = '';
       String tempture = '';
@@ -17,6 +18,7 @@ class _MainState extends State<mainController>{
       List middleBtn = [];
       List hotAds = [];
       List shopMailAds = [];
+      List bindHouses = [];
      @override
       void initState() {
            // TODO: implement initState
@@ -32,7 +34,7 @@ class _MainState extends State<mainController>{
               title: new Center(
                 child: new GestureDetector(
                     onTap: (){
-                      print('切换项目');
+                      _getUserBindHouse();
                     },
                     child:new Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -79,7 +81,7 @@ class _MainState extends State<mainController>{
             height: 200,
             child: Swiper(
               itemBuilder: _SwiperBuilder,
-              itemCount: projectPicAds.length,
+              itemCount: projectPicAds.length > 0 ? projectPicAds.length : 0,
               control: new SwiperControl(),
               scrollDirection: Axis.horizontal,
               autoplay: true,
@@ -202,6 +204,39 @@ class _MainState extends State<mainController>{
        );
     } 
 
+    _exchangeProject(){
+      showDialog<Null>(
+           context: context,
+           builder: (BuildContext context){
+               return new SimpleDialog(
+                  title: new Text('请选择房屋'),
+                  children: <Widget>[
+                     buildGrid()
+            ],
+         );
+        }
+      );
+    }
+    
+    Widget buildGrid(){
+       List<Widget> houses = [];
+       Widget content;
+       for (var item in bindHouses){
+         houses.add(
+           new SimpleDialogOption(
+             child: new Text(item['projectName']+item['resourceName']),
+             onPressed: (){
+               Navigator.of(context).pop();
+             },
+           )
+         );
+       }
+       content = new Column(
+            children: houses,
+       );
+       return content;
+    }
+
      _scan(){
        print('点击了扫码按钮');
      }
@@ -244,7 +279,6 @@ class _MainState extends State<mainController>{
        String url = Api().SHOPMAILADS_URL;
        var params = {'projectId':projectId};
        var response =await HttpUtil().post(url,data:params);
-       print(response);
        if (response['r'].toString() == '0'){
           setState(() {
                       hotAds = response['shop'];
@@ -253,12 +287,28 @@ class _MainState extends State<mainController>{
        }
      }
 
+    _getUserBindHouse() async{
+       String url = Api().USERBINDHOUSE_URL;
+       var params = {'contactid':userId};
+       var response = await HttpUtil().post(url,data:params);
+       print(response);
+       if (response['r'].toString() == '0'){
+          setState(() {
+                      bindHouses = response['data'];
+                    });
+          _exchangeProject();
+       }
+    }
      // 本地查询是否存在登录用户
     _selectLocalUser() async{
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String projectid = prefs.get('USERPROJECTID');
+        String userid = prefs.get('USERID');
         if (projectid !=null && projectid.length > 0){
            projectId = projectid;  
+        }
+        if (userid != null && userid.length > 0){
+           userId = userid;
         }
         _getProjectPic();
         _getShopMailAds();

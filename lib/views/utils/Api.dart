@@ -9,4 +9,5 @@ class Api{
     var WEATHER_URL = 'http://api.justbon.com/weather/queryWeatherInfo.json';
     var MIDDLEBTN_URL = 'http://weblink.justbon.com/getPicByRoleIdAndType.action?roleid=role_30';
     var SHOPMAILADS_URL = 'https://jcp.justbon.com/api/frontAd';
+    var USERBINDHOUSE_URL = 'https://jcp.justbon.com/api/commons/getBindHouseInfo';
 }
