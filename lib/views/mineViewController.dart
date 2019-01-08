@@ -123,19 +123,23 @@ class _MineState extends State<mineViewController>{
         String url = Api().USERINFO_URL;
         var params = {'sCommandName':'getMember','sInput':{'ID':userId}};
         var response = await HttpUtil().post(url,data:params); 
-        setState(() {
+        if (response['success'].toString() == '1'){
+             setState(() {
                 headImgUrl = response['Item']['sHeadImg']; 
                 nikeName =  response['Item']['sNickName'];  
                     });
+        }
      }
     // 获取用户嘉豆信息
     void _pullUserJiadou() async{
       String url = Api().USERJIADOU_URL;
       var params = {'requestData':{'userId':userId}};
       var response = await HttpUtil().post(url,data:params);
-      setState(() {
+      if (response['resultCode'].toString() == '200'){
+            setState(() {
               jiadouCount = response['resultData']['total'].toString();
             });
+      }
     }
     // 选中我的列表
     void _itemClick(String itemTitle){
