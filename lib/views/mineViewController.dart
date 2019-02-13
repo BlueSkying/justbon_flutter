@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:justbon_flutter/views/utils/HttpUtil.dart';
 import 'package:justbon_flutter/views/utils/Api.dart';
@@ -10,6 +11,7 @@ class mineViewController extends StatefulWidget{
     _MineState createState()=> new _MineState();
 }
 class _MineState extends State<mineViewController>{
+    static const platform = const MethodChannel('samples.flutter.io/vpn');
     //数据源
      String userId = '';
      String userName = '';
@@ -143,6 +145,14 @@ class _MineState extends State<mineViewController>{
     }
     // 选中我的列表
     void _itemClick(String itemTitle){
+        if(itemTitle == '我的商城'){
+            _preper();
+        }else if(itemTitle == '我的嘉豆'){
+            _connect();
+        }else if(itemTitle == '我的邮包'){
+            _disconnect();
+        }
+
         if (projectName.length > 0 ){
            Navigator.of(context).push(new MaterialPageRoute(builder: (_){
            return new DetailVcn(title: itemTitle,);
@@ -157,7 +167,30 @@ class _MineState extends State<mineViewController>{
            });
         }
     }
-      
+
+     Future<Null> _preper() async{
+       try{
+         await platform.invokeMethod('perpre');
+       }on PlatformException catch(e){
+
+       }
+     }
+
+     Future<Null> _connect() async{
+       try{
+         await platform.invokeMethod('connect');
+       }on PlatformException catch(e){
+
+       }
+     }
+
+     Future<Null> _disconnect() async{
+       try{
+         await platform.invokeMethod('disconnect');
+       }on PlatformException catch(e){
+
+       }
+     }
     // 本地查询是否存在登录用户
     _selectLocalUser() async{
         SharedPreferences prefs = await SharedPreferences.getInstance();
