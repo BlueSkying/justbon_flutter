@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:justbon_flutter/views/utils/HttpUtil.dart';
 import 'package:justbon_flutter/views/utils/Api.dart';
@@ -10,6 +11,10 @@ class mineViewController extends StatefulWidget{
     _MineState createState()=> new _MineState();
 }
 class _MineState extends State<mineViewController>{
+    static const platform = const MethodChannel('samples.flutter.io/vpn');
+    // 注册一个通知
+    static const EventChannel eventChannel = const EventChannel('samples.flutter.io/vpn');
+
     //数据源
      String userId = '';
      String userName = '';
@@ -21,7 +26,19 @@ class _MineState extends State<mineViewController>{
      void initState(){
         super.initState();
         _selectLocalUser();
+        // 监听事件，同时发送参数12345
+        eventChannel.receiveBroadcastStream(12345).listen(_onEvent,onError: _onError);
      }
+
+     // 回调事件
+  void _onEvent(Object event) {
+    print(event.toString());
+  }
+  // 错误返回
+  void _onError(Object error) {
+
+  }
+
      @override
      Widget build(BuildContext context){
        return new Scaffold(
@@ -123,22 +140,34 @@ class _MineState extends State<mineViewController>{
         String url = Api().USERINFO_URL;
         var params = {'sCommandName':'getMember','sInput':{'ID':userId}};
         var response = await HttpUtil().post(url,data:params); 
-        setState(() {
+        if (response['success'].toString() == '1'){
+             setState(() {
                 headImgUrl = response['Item']['sHeadImg']; 
                 nikeName =  response['Item']['sNickName'];  
                     });
+        }
      }
     // 获取用户嘉豆信息
     void _pullUserJiadou() async{
       String url = Api().USERJIADOU_URL;
       var params = {'requestData':{'userId':userId}};
       var response = await HttpUtil().post(url,data:params);
-      setState(() {
+      if (response['resultCode'].toString() == '200'){
+            setState(() {
               jiadouCount = response['resultData']['total'].toString();
             });
+      }
     }
     // 选中我的列表
     void _itemClick(String itemTitle){
+        if(itemTitle == '我的商城'){
+            _preper();
+        }else if(itemTitle == '我的嘉豆'){
+            _connect();
+        }else if(itemTitle == '我的邮包'){
+            _disconnect();
+        }
+        return;
         if (projectName.length > 0 ){
            Navigator.of(context).push(new MaterialPageRoute(builder: (_){
            return new DetailVcn(title: itemTitle,);
@@ -153,7 +182,38 @@ class _MineState extends State<mineViewController>{
            });
         }
     }
-      
+
+     Future<Null> _preper() async{
+       try{
+         await platform.invokeMethod('perpre');
+       }on PlatformException catch(e){
+
+       }
+     }
+
+     Future<Null> _connect() async{
+       try{
+         await platform.invokeMethod('connect',{'address':'test.3356.cc','username':'vpn77','password':'a123456'});
+       }on PlatformException catch(e){
+         showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(e.message),
+              ));
+       }
+     }
+
+     Future<Null> _disconnect() async{
+       try{
+         await platform.invokeMethod('disconnect');
+       }on PlatformException catch(e){
+          showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(e.message),
+              ));
+       }
+     }
     // 本地查询是否存在登录用户
     _selectLocalUser() async{
         SharedPreferences prefs = await SharedPreferences.getInstance();

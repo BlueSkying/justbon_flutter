@@ -9,6 +9,7 @@ class mainController extends StatefulWidget{
 }
 
 class _MainState extends State<mainController>{
+      String title = '生活家';
       String projectId = '';
       String userId = '';
       List projectPicAds = [];
@@ -39,7 +40,7 @@ class _MainState extends State<mainController>{
                     child:new Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                             new Text('生活家',style: new TextStyle(color: Color(0xff333333),fontSize: 14,),textAlign: TextAlign.center,),
+                             new Text(title,style: new TextStyle(color: Color(0xff333333),fontSize: 14,),textAlign: TextAlign.center,),
                              new Image.asset('images/in-arrow.png',width: 10,height: 10,)
                         ],
                     ), 
@@ -226,6 +227,10 @@ class _MainState extends State<mainController>{
            new SimpleDialogOption(
              child: new Text(item['projectName']+item['resourceName']),
              onPressed: (){
+               setState(() {
+                     title = item['projectName']+item['resourceName'];
+                     projectId = item['projectId'];  
+                              });
                Navigator.of(context).pop();
              },
            )
