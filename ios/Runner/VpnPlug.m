@@ -22,15 +22,20 @@ static VpnPlug *instance = nil;
     return instance;
 }
 
+
+
 - (void) connecting:(NSDictionary *)dict{
+    if (self.manage){
+        [self connect];
+        return;
+    }
     _status = @"0";
     self.manage = [NEVPNManager sharedManager];
     [self.manage loadFromPreferencesWithCompletionHandler:^(NSError * _Nullable error) {
         NSError *errors = error;
         if (errors) {
             NSLog(@"%@",errors);
-        }
-        else{
+        } else{
             NEVPNProtocolIKEv2 *p = [[NEVPNProtocolIKEv2 alloc] init];
             //用户名
             p.username = dict[@"username"];
@@ -59,7 +64,7 @@ static VpnPlug *instance = nil;
             self.manage.onDemandEnabled = NO;
             
             [self.manage setProtocolConfiguration:p];
-            //我们app的描述 叫这个 你随便..
+            //vpn显示的名字
             self.manage.localizedDescription = dict[@"username"];
             
             self.manage.enabled = true;
@@ -67,8 +72,7 @@ static VpnPlug *instance = nil;
             [self.manage saveToPreferencesWithCompletionHandler:^(NSError *error) {
                 if(error) {
                     NSLog(@"Save error: %@", error);
-                }
-                else {
+                } else {
                     NSLog(@"Saved!");
                     [weakSelf connect];
                 }
@@ -92,6 +96,22 @@ static VpnPlug *instance = nil;
 
 - (void) disconnect{
      [self.manage.connection stopVPNTunnel];
+}
+
+- (void) deleteVpn{
+    [NETunnelProviderManager loadAllFromPreferencesWithCompletionHandler:^(NSArray<NETunnelProviderManager *> * _Nullable managers, NSError * _Nullable error) {
+        if(managers.count == 0){
+            return ;
+        }else{
+            for (NETunnelProviderManager * manage in managers){
+                [manage removeFromPreferencesWithCompletionHandler:^(NSError * _Nullable error) {
+                    if (error != nil){
+                        NSLog(@"删除失败");
+                    }
+                }];
+            }
+        }
+    }];
 }
 
 - (void) onVpnStateChange:(NSNotification *)Notification{
@@ -126,6 +146,53 @@ static VpnPlug *instance = nil;
         default:
             break;
     }
+}
+
+- (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events {
+   //arguments flutter给native的参数
+   //回调给flutter，建议使用实例指向，因为该block可以使用多次
+    if (events){
+        events(@"新标题");
+        /*
+        NSMutableDictionary * params = [NSMutableDictionary dictionaryWithCapacity:0];
+        [params setValue:_status forKey:@"code"];
+        [params setValue:@"连接信息" forKey:@"message"];
+        [params setValue:@"无信息" forKey:@"details"];
+        
+        events([self convertToJsonData:params]);
+         */
+    }
+    return nil;
+}//此处的arguments可以转化为刚才receiveBroadcastStream("init")的名称，这样我们就可以一个event来监听多个方法实例
+//flutter不再接受
+- (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
+   //arguments  flutter给native的参数
+    NSLog(@"argument==%@",arguments);
+    return nil;
+}
+
+
+-(NSString *)convertToJsonData:(NSDictionary *)dict
+{
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *jsonString;
+    
+    if (!jsonData) {
+        NSLog(@"%@",error);
+    }else{
+        jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+    }
+    
+    NSMutableString *mutStr = [NSMutableString stringWithString:jsonString];
+    //    NSRange range = {0,jsonString.length};
+    //    //去掉字符串中的空格
+    //    [mutStr replaceOccurrencesOfString:@" " withString:@"" options:NSLiteralSearch range:range];
+    NSRange range2 = {0,mutStr.length};
+    //去掉字符串中的换行符
+    [mutStr replaceOccurrencesOfString:@"\n" withString:@"" options:NSLiteralSearch range:range2];
+    
+    return mutStr;
 }
 
 - (NSData *)searchKeychainCopyMatching:(NSString *)identifier {

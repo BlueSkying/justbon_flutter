@@ -18,13 +18,30 @@
         }else if([@"connect" isEqualToString:call.method]){
             NSDictionary * dict = call.arguments;
             [[VpnPlug sharedInstance] connecting:dict];
-            result([FlutterError errorWithCode:[VpnPlug sharedInstance].status message:@"连接成功" details:nil]);
+//            result([FlutterError errorWithCode:[VpnPlug sharedInstance].status message:@"连接成功" details:nil]);
+            [self sendmessage];
         }else if ([@"disconnect" isEqualToString:call.method]){
             [[VpnPlug sharedInstance]disconnect];
-            result([FlutterError errorWithCode:[VpnPlug sharedInstance].status message:@"断开连接" details:nil]);
+//            result([FlutterError errorWithCode:[VpnPlug sharedInstance].status message:@"断开连接" details:nil]);
         }
     }];
+    
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
+- (void)sendmessage{
+    FlutterViewController * flutterViewController = [FlutterViewController new];
+    FlutterBasicMessageChannel * messageChannel = [FlutterBasicMessageChannel messageChannelWithName:@"samples.flutter.io/vpn" binaryMessenger:flutterViewController codec:[FlutterStandardMessageCodec sharedInstance]];
+    [messageChannel sendMessage:@"新标题" reply:^(id  _Nullable reply) {
+        NSLog(@"reply ==%@",reply);
+    }];
+    [messageChannel setMessageHandler:^(id  _Nullable message, FlutterReply  _Nonnull callback) {
+        NSString * mess = (NSString *)message;
+        if (mess.length > 0){
+          NSLog(@"dart发送过来的消息==%@",message);
+          callback(@"ios回传");
+        }
+    }];
 }
 
 @end

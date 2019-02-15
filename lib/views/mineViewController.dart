@@ -12,10 +12,11 @@ class mineViewController extends StatefulWidget{
 }
 class _MineState extends State<mineViewController>{
     static const platform = const MethodChannel('samples.flutter.io/vpn');
-    // 注册一个通知
-    static const EventChannel eventChannel = const EventChannel('samples.flutter.io/vpn');
+    
+    static const _messageChannel = const BasicMessageChannel("samples.flutter.io/vpn", StandardMessageCodec());
 
     //数据源
+     String navTitle = '我的';
      String userId = '';
      String userName = '';
      String headImgUrl = '';
@@ -26,24 +27,28 @@ class _MineState extends State<mineViewController>{
      void initState(){
         super.initState();
         _selectLocalUser();
-        // 监听事件，同时发送参数12345
-        eventChannel.receiveBroadcastStream(12345).listen(_onEvent,onError: _onError);
      }
-
-     // 回调事件
-  void _onEvent(Object event) {
-    print(event.toString());
-  }
-  // 错误返回
-  void _onError(Object error) {
-
-  }
-
+    // 发送给原生端，并且收到原生端端回复
+    Future<String>sendMessage() async{
+      String reply = await _messageChannel.send("sssongiamdartside");
+      print("reply===$reply");
+      return reply;
+    }   
+    // 从platform端接受消息，并且发送信息
+    void receiveMessage(){
+      _messageChannel.setMessageHandler((message) async{
+        setState(() {
+          navTitle = message;
+        });
+          print("sssong receive from platform+ $message");
+          return "sssong i am dart side";
+      });
+    }
      @override
      Widget build(BuildContext context){
        return new Scaffold(
             appBar: new AppBar(
-              title: new Text('我的'),
+              title: new Text(navTitle),
               actions: <Widget>[
                 IconButton(
                   icon: new Image.asset('images/icon_set.png',width: 25,height: 25,),
@@ -166,6 +171,8 @@ class _MineState extends State<mineViewController>{
             _connect();
         }else if(itemTitle == '我的邮包'){
             _disconnect();
+        }else if(itemTitle == '商务合作'){
+            sendMessage();
         }
         return;
         if (projectName.length > 0 ){

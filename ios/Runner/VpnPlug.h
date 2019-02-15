@@ -8,13 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import <NetworkExtension/NetworkExtension.h>
-@interface VpnPlug : NSObject
+#import <Flutter/Flutter.h>
+@interface VpnPlug : NSObject<FlutterStreamHandler>
 
 + (VpnPlug *) sharedInstance;
 
 @property (nonatomic,strong)NEVPNManager *manage;
 
 @property (nonatomic,assign)NSString * status;
+
+@property (nonatomic,strong)FlutterEventChannel *eventChannel;
 
 - (void) connecting:(NSDictionary *)dict;
 
