@@ -31,6 +31,11 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>嘉宝生活家将调用定位功能作为首页查询天气及车辆限行信息使用,是否允许？</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

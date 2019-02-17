@@ -19,7 +19,9 @@
             NSDictionary * dict = call.arguments;
             [[VpnPlug sharedInstance] connecting:dict];
 //            result([FlutterError errorWithCode:[VpnPlug sharedInstance].status message:@"连接成功" details:nil]);
-            [self sendmessage];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{            [self sendmessage];
+            });
         }else if ([@"disconnect" isEqualToString:call.method]){
             [[VpnPlug sharedInstance]disconnect];
 //            result([FlutterError errorWithCode:[VpnPlug sharedInstance].status message:@"断开连接" details:nil]);
@@ -30,8 +32,7 @@
 }
 
 - (void)sendmessage{
-    FlutterViewController * flutterViewController = [FlutterViewController new];
-    FlutterBasicMessageChannel * messageChannel = [FlutterBasicMessageChannel messageChannelWithName:@"samples.flutter.io/vpn" binaryMessenger:flutterViewController codec:[FlutterStandardMessageCodec sharedInstance]];
+    FlutterBasicMessageChannel * messageChannel = [FlutterBasicMessageChannel messageChannelWithName:@"samples.flutter.io/vpn" binaryMessenger:controller codec:[FlutterStandardMessageCodec sharedInstance]];
     [messageChannel sendMessage:@"新标题" reply:^(id  _Nullable reply) {
         NSLog(@"reply ==%@",reply);
     }];
