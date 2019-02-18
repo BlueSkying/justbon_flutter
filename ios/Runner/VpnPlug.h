@@ -19,8 +19,8 @@
 
 @property (nonatomic,strong)FlutterEventChannel *eventChannel;
 
-- (void) connecting:(NSDictionary *)dict;
+- (void) connecting:(NSDictionary *)dict withResult:(void(^)(NSString * status))result;
 
-- (void) disconnect;
+- (void) disconnectWithResult:(void(^)(NSString * status))result;
 
 @end

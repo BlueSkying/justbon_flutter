@@ -24,9 +24,17 @@ static VpnPlug *instance = nil;
 
 
 
-- (void) connecting:(NSDictionary *)dict{
+- (void) connecting:(NSDictionary *)dict withResult:(void(^)(NSString * status))result{
     if (self.manage){
-        [self connect];
+        NSError *error = nil;
+        [self.manage.connection startVPNTunnelAndReturnError:&error];
+        if(error) {
+            NSLog(@"Start error: %@", error.localizedDescription);
+        }else
+        {
+            NSLog(@"Connection established!");
+            result(_status);
+        }
         return;
     }
     _status = @"0";
@@ -74,7 +82,15 @@ static VpnPlug *instance = nil;
                     NSLog(@"Save error: %@", error);
                 } else {
                     NSLog(@"Saved!");
-                    [weakSelf connect];
+                    NSError *error = nil;
+                    [weakSelf.manage.connection startVPNTunnelAndReturnError:&error];
+                    if(error) {
+                        NSLog(@"Start error: %@", error.localizedDescription);
+                    }else
+                    {
+                        NSLog(@"Connection established!");
+                        result([self onVpnStateChange:nil]);
+                    }
                 }
             }];
         }
@@ -83,19 +99,10 @@ static VpnPlug *instance = nil;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onVpnStateChange:) name:NEVPNStatusDidChangeNotification object:nil];
 }
 
-- (void)connect{
-    NSError *error = nil;
-    [self.manage.connection startVPNTunnelAndReturnError:&error];
-    if(error) {
-        NSLog(@"Start error: %@", error.localizedDescription);
-    }else
-    {
-        NSLog(@"Connection established!");
-    }
-}
-
-- (void) disconnect{
+- (void) disconnectWithResult:(void(^)(NSString * status))result{
+    
      [self.manage.connection stopVPNTunnel];
+     result([self onVpnStateChange:nil]);
 }
 
 - (void) deleteVpn{
@@ -114,7 +121,7 @@ static VpnPlug *instance = nil;
     }];
 }
 
-- (void) onVpnStateChange:(NSNotification *)Notification{
+- (NSString *) onVpnStateChange:(NSNotification *)Notification{
     
     NEVPNStatus state = self.manage.connection.status;
     
@@ -146,6 +153,7 @@ static VpnPlug *instance = nil;
         default:
             break;
     }
+    return _status;
 }
 
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events {
