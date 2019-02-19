@@ -27,7 +27,18 @@ class _MineState extends State<mineViewController>{
      void initState(){
         super.initState();
         _selectLocalUser();
+        platform.setMethodCallHandler(vpnChangeStatus);
      }
+
+    Future<dynamic>vpnChangeStatus(MethodCall call) async{
+      if (call.method == 'vpnStatusChanged'){
+         print(call.arguments);
+         setState(() {
+           navTitle = call.arguments.toString();
+         });
+      }
+    }
+
     // 发送给原生端，并且收到原生端端回复
     Future<String>sendMessage() async{
       String reply = await _messageChannel.send("sssongiamdartside");

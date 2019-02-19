@@ -153,54 +153,8 @@ static VpnPlug *instance = nil;
         default:
             break;
     }
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"vpnStatusChange" object:nil];
     return _status;
-}
-
-- (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events {
-   //arguments flutter给native的参数
-   //回调给flutter，建议使用实例指向，因为该block可以使用多次
-    if (events){
-        events(@"新标题");
-        /*
-        NSMutableDictionary * params = [NSMutableDictionary dictionaryWithCapacity:0];
-        [params setValue:_status forKey:@"code"];
-        [params setValue:@"连接信息" forKey:@"message"];
-        [params setValue:@"无信息" forKey:@"details"];
-        
-        events([self convertToJsonData:params]);
-         */
-    }
-    return nil;
-}//此处的arguments可以转化为刚才receiveBroadcastStream("init")的名称，这样我们就可以一个event来监听多个方法实例
-//flutter不再接受
-- (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
-   //arguments  flutter给native的参数
-    NSLog(@"argument==%@",arguments);
-    return nil;
-}
-
-
--(NSString *)convertToJsonData:(NSDictionary *)dict
-{
-    NSError *error;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
-    NSString *jsonString;
-    
-    if (!jsonData) {
-        NSLog(@"%@",error);
-    }else{
-        jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
-    }
-    
-    NSMutableString *mutStr = [NSMutableString stringWithString:jsonString];
-    //    NSRange range = {0,jsonString.length};
-    //    //去掉字符串中的空格
-    //    [mutStr replaceOccurrencesOfString:@" " withString:@"" options:NSLiteralSearch range:range];
-    NSRange range2 = {0,mutStr.length};
-    //去掉字符串中的换行符
-    [mutStr replaceOccurrencesOfString:@"\n" withString:@"" options:NSLiteralSearch range:range2];
-    
-    return mutStr;
 }
 
 - (NSData *)searchKeychainCopyMatching:(NSString *)identifier {
