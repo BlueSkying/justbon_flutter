@@ -167,7 +167,7 @@ class _MineState extends State<mineViewController>{
         }else if(itemTitle == '我的邮包'){
             _disconnect();
         }else if(itemTitle == '商务合作'){
-            sendMessage();
+            
         }
         return;
         if (projectName.length > 0 ){
