@@ -11,7 +11,7 @@ class mineViewController extends StatefulWidget{
     _MineState createState()=> new _MineState();
 }
 class _MineState extends State<mineViewController>{
-    static const platform = const MethodChannel('samples.flutter.io/vpn');
+    static const platform = const MethodChannel('flutter_vpn');
     
     static const _messageChannel = const BasicMessageChannel("samples.flutter.io/vpn", StandardMessageCodec());
 
@@ -37,24 +37,8 @@ class _MineState extends State<mineViewController>{
            navTitle = call.arguments.toString();
          });
       }
-    }
-
-    // 发送给原生端，并且收到原生端端回复
-    Future<String>sendMessage() async{
-      String reply = await _messageChannel.send("sssongiamdartside");
-      print("reply===$reply");
-      return reply;
     }   
-    // 从platform端接受消息，并且发送信息
-    void receiveMessage(){
-      _messageChannel.setMessageHandler((message) async{
-        setState(() {
-          navTitle = message;
-        });
-          print("sssong receive from platform+ $message");
-          return "sssong i am dart side";
-      });
-    }
+
      @override
      Widget build(BuildContext context){
        return new Scaffold(
@@ -203,7 +187,7 @@ class _MineState extends State<mineViewController>{
 
      Future<Null> _preper() async{
        try{
-         await platform.invokeMethod('perpre');
+         await platform.invokeMethod('prepare');
        }on PlatformException catch(e){
 
        }

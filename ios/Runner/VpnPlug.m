@@ -22,9 +22,7 @@ static VpnPlug *instance = nil;
     return instance;
 }
 
-
-
-- (void) connecting:(NSDictionary *)dict withResult:(void(^)(NSString * status))result{
+- (void) connecting:(NSDictionary *)dict{
     if (self.manage){
         NSError *error = nil;
         [self.manage.connection startVPNTunnelAndReturnError:&error];
@@ -33,7 +31,6 @@ static VpnPlug *instance = nil;
         }else
         {
             NSLog(@"Connection established!");
-            result(_status);
         }
         return;
     }
@@ -89,7 +86,6 @@ static VpnPlug *instance = nil;
                     }else
                     {
                         NSLog(@"Connection established!");
-                        result([self onVpnStateChange:nil]);
                     }
                 }
             }];
@@ -99,10 +95,8 @@ static VpnPlug *instance = nil;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onVpnStateChange:) name:NEVPNStatusDidChangeNotification object:nil];
 }
 
-- (void) disconnectWithResult:(void(^)(NSString * status))result{
-    
+- (void) disconnect{
      [self.manage.connection stopVPNTunnel];
-     result([self onVpnStateChange:nil]);
 }
 
 - (void) deleteVpn{
@@ -127,28 +121,28 @@ static VpnPlug *instance = nil;
     
     switch (state) {
         case NEVPNStatusInvalid:
-            NSLog(@"无效连接");
-            _status = @"0";
+            NSLog(@"无效连接autherror");
+            _status = @"3";
             break;
         case NEVPNStatusDisconnected:
-            NSLog(@"未连接");
-            _status = @"1";
+            NSLog(@"未连接down");
+            _status = @"2";
             break;
         case NEVPNStatusConnecting:
             NSLog(@"正在连接");
-            _status = @"2";
+            _status = @"9";
             break;
         case NEVPNStatusConnected:
-            NSLog(@"已连接");
-            _status = @"3";
+            NSLog(@"已连接up");
+            _status = @"1";
             break;
         case NEVPNStatusReasserting:
             NSLog(@"重新连接");
-            _status = @"4";
+            _status = @"11";
             break;
         case NEVPNStatusDisconnecting:
             NSLog(@"断开连接");
-            _status = @"5";
+            _status = @"10";
             break;
         default:
             break;

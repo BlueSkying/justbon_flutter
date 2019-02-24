@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <NetworkExtension/NetworkExtension.h>
 #import <Flutter/Flutter.h>
-@interface VpnPlug : NSObject<FlutterStreamHandler>
+@interface VpnPlug : NSObject
 
 + (VpnPlug *) sharedInstance;
 
@@ -19,8 +19,8 @@
 
 @property (nonatomic,strong)FlutterEventChannel *eventChannel;
 
-- (void) connecting:(NSDictionary *)dict withResult:(void(^)(NSString * status))result;
+- (void) connecting:(NSDictionary *)dict;
 
-- (void) disconnectWithResult:(void(^)(NSString * status))result;
+- (void) disconnect;
 
 @end
